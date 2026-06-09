@@ -28,7 +28,7 @@
 
 | 文档 | 内容 |
 |------|------|
-| **[📘 删除F盘扩容C盘全流程指南](删除F盘扩容C盘全流程指南.md)** | 主文档——图文并茂的完整操作流程，从检查磁盘到 BitLocker 恢复，每一步都有截图 |
+| **[📘 合并F盘到C盘全流程指南](合并F盘到C盘全流程指南.md)** | 主文档——图文并茂的完整操作流程，从检查磁盘到 BitLocker 恢复，每一步都有截图 |
 | **[📄 技能文档](disk-partition-merge-bitlocker-skill.md)** | 技术向全记录——完整的 PowerShell 命令、AOMEI 操作细节、故障排查手册 |
 
 附带 5 张截图，覆盖所有关键操作节点：右键菜单、拖拽分区、套用按钮、执行确认、语言设置。
@@ -76,7 +76,7 @@ AI 负责 CLI（命令行）→ 你负责 GUI（拖拽）→ AI 接手后续（B
 git clone https://github.com/web-seeker/pc-ops.git
 ```
 
-打开 **[📘 删除F盘扩容C盘全流程指南](删除F盘扩容C盘全流程指南.md)** 开始阅读。
+打开 **[📘 合并F盘到C盘全流程指南](合并F盘到C盘全流程指南.md)** 开始阅读。
 
 > ⚠️ **操作前务必完整阅读文档中的免责声明和注意事项。磁盘操作有不可逆风险，请确认数据已备份。**
 
@@ -86,7 +86,7 @@ git clone https://github.com/web-seeker/pc-ops.git
 
 ```
 pc-ops/
-├── 删除F盘扩容C盘全流程指南.md               # 👈 先看这个
+├── 合并F盘到C盘全流程指南.md                   # 👈 先看这个
 ├── disk-partition-merge-bitlocker-skill.md  # 完整技能文档（技术向）
 ├── aomei-main-interface.png                 # 操作完成后的分区布局
 ├── aomei-resize-move.png                    # 右键菜单「调整/移动分区」
