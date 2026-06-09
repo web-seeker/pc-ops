@@ -37,15 +37,35 @@
 
 ### 🔍 清除残留 SID 账户
 
-> 文件权限中出现「未知账户(S-1-5-21-xxx)」→ 全盘扫描 → 逐项清除 → 验证无残留
+> 文件夹 → 属性 → 安全 → 发现一个「未知账户(S-1-5-21-xxx)」删不掉？
+
+这是已删除用户的残留 SID（Security Identifier）。虽然一般不影响使用，但权限列表看着碍眼，安全审计工具也会标记。本模块记录了从识别到彻底清除的全过程。
+
+**实际操作案例**：在 `C:\ProgramData\Microsoft\Windows\Start Menu` 中发现 `S-1-5-21-1482809247-1092165676-3601881385-1000`，经全盘扫描确认仅此一处，已成功移除。
+
+**四步流程**：
+
+```
+识别目标 SID → 全面扫描（文件系统 + 注册表 + 任务计划 + 服务）→ 逐项清除 → 验证无残留
+```
+
+**扫描范围覆盖**：
+
+| 检查项 | 方法 |
+|--------|------|
+| 文件系统 ACL | `icacls /findsid` + `Get-Acl` 递归扫描 ProgramData、Users、Windows |
+| 注册表 | ProfileList、ProfileGuid、AppID |
+| 计划任务 | `Get-ScheduledTask` 过滤 Principal.UserId |
+| Windows 服务 | WMI 查询 StartName |
+| SID 命名文件夹 | `C:\Users\S-1-5-21-*` 残留目录 |
 
 | 文档 | 说明 |
 |------|------|
-| [📘 操作指南](sid-cleanup/清除残留SID账户操作指南.md) | 覆盖 icacls、PowerShell ACL、注册表、任务计划、服务账户 |
+| [📘 操作指南](sid-cleanup/清除残留SID账户操作指南.md) | 完整操作流程：识别 → 扫描 → 清除 → 验证。含全部 PowerShell 命令和截图 |
 
-包含权限条目示例截图（其他账户已打码）。
+包含权限条目示例截图（其他账户已打码处理）。
 
-> 💡 `Get-Acl` + `Set-Acl` 比手动翻 GUI 属性窗口快十倍。AI 写脚本三分钟扫完整个 ProgramData。
+> 💡 手动翻属性窗口删 ACL 条目要十几分钟，AI 写个 `Get-Acl` + `Set-Acl` 脚本三分钟扫完整个 ProgramData 并清理干净。这类重复性权限操作最适合交给 AI。
 
 ---
 
