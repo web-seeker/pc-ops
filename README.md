@@ -1,73 +1,109 @@
-# pc-ops
+<p align="center">
+  <img src="https://img.shields.io/badge/platform-Windows-blue?style=flat-square" alt="Windows">
+  <img src="https://img.shields.io/badge/tools-AOMEI%20%2B%20diskpart-green?style=flat-square" alt="Tools">
+  <img src="https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square" alt="MIT">
+  <img src="https://img.shields.io/badge/verified-2026.06-success?style=flat-square" alt="Verified">
+</p>
 
-> 个人电脑操作实战手册 —— 用 AI 辅助完成磁盘分区、系统配置等日常运维任务。
+# pc-ops 🖥️
 
-## 关于本仓库
+**C 盘红了？删了个废弃分区不知道怎么合并回去？BitLocker 锁着不敢动？**
 
-本仓库记录了使用 **QoderWork CN（User 版）** 桌面 AI 助手辅助完成 Windows 系统运维的完整流程。每份技能文档包含命令行操作、GUI 操作截图、注意事项和踩坑记录，既可作为日后参考手册，也可分享给遇到类似问题的用户。
-
-AI 不是万能的 —— 本仓库最大价值在于明确划分了 **AI 能做** 和 **必须手动** 的边界，避免你在自动化操作中反复踩坑。
-
-## 仓库结构
-
-```
-pc-ops/
-├── disk-partition-merge-bitlocker-skill.md  # 磁盘分区合并 + BitLocker 恢复 完整技能文档
-├── 分区操作指南.md                            # 简版分区操作指南
-├── aomei-main-interface.png                 # AOMEI 主界面截图（操作完成后）
-├── aomei-resize-move.png                    # 右键菜单「调整/移动分区」
-├── aomei-apply-button.png                   # 顶部「套用」按钮
-├── aomei-apply-restart.png                  # 执行确认 + 重启提示
-├── aomei-language-menu.png                  # 语言设置路径
-└── README.md                                # 本文件
-```
-
-## 已收录内容
-
-### Windows 磁盘分区合并 + BitLocker 恢复
-
-**场景**：删除废弃分区 → 将释放空间合并到 C 盘 → 操作后恢复 BitLocker 加密。
-
-**实际操作案例**：删除 F 盘（172GB）→ C 盘从 195GB 扩容至 368GB → 重新启用 BitLocker 保护。
-
-**涉及工具**：
-
-| 工具 | 用途 |
-|------|------|
-| QoderWork CN（User 版） | AI 桌面助手，负责命令行操作与流程编排 |
-| AOMEI Partition Assistant 标准版 | 第三方分区工具，手动拖拽移动/扩展分区 |
-| Windows diskpart | 删除分区 |
-| Windows manage-bde | BitLocker 加密管理 |
-
-**核心经验**：
-
-- AOMEI 的 MFC 图形界面 AI 无法可靠自动化（管理员权限隔离、DPI 缩放、自定义控件不暴露给无障碍 API）。AI 尝试自动化时反复崩溃。结论：**GUI 拖拽操作必须手动完成**，AI 负责命令行部分即可
-- Windows 原生磁盘管理不支持移动分区，必须借助第三方工具
-- BitLocker 生命周期：操作分区前暂停保护 → 重启后重新启用 → 为数据盘开启自动解锁
-
-更多细节见 [完整技能文档](disk-partition-merge-bitlocker-skill.md)。
-
-## 适用人群
-
-- Windows 用户，有一定基础，愿意尝试用 AI 辅助运维
-- 遇到过类似磁盘分区问题的人，可直接参考操作流程
-- 对 QoderWork 桌面 AI 助手实际能力边界感兴趣的用户
-
-## 使用方式
-
-1. 克隆仓库到本地：
-   ```bash
-   git clone https://github.com/web-seeker/pc-ops.git
-   ```
-
-2. 根据需求打开对应的 `.md` 技能文档
-
-3. ⚠️ 执行任何磁盘操作前，务必确认数据已备份，并仔细阅读文档中的「注意事项」部分
-
-## 许可
-
-MIT License
+这个仓库记录了用 **AI 桌面助手 + 第三方分区工具** 搞定 Windows 磁盘扩容的全过程——从 195GB 吃到 368GB，每一步都有截图、命令和踩坑说明。不止告诉你「怎么做」，还会告诉你「AI 在这里栽过什么跟头」。
 
 ---
 
-🤖 部分内容由 [QoderWork](https://qoder.com) 辅助生成 · 所有操作流程均经实际验证
+## 📊 实际战果
+
+```
+扩容前  [C: 195GB ████████░░░░░░░░] 天天弹窗「磁盘空间不足」
+扩容后  [C: 368GB ████████████████░] 半年内不用再清理
+```
+
+一次操作，省下以后每个月清理磁盘的焦虑时间。
+
+---
+
+## 🎯 这里有什么
+
+| 文档 | 内容 |
+|------|------|
+| **[📘 分区操作指南](分区操作指南.md)** | 主文档——图文并茂的完整操作流程，从检查磁盘到 BitLocker 恢复，每一步都有截图 |
+| **[📄 技能文档](disk-partition-merge-bitlocker-skill.md)** | 技术向全记录——完整的 PowerShell 命令、AOMEI 操作细节、故障排查手册 |
+
+附带 5 张截图，覆盖所有关键操作节点：右键菜单、拖拽分区、套用按钮、执行确认、语言设置。
+
+---
+
+## ⚡ 三句话说完
+
+1. **AI 用 diskpart 删掉 F 盘** → 释放 173GB 未分配空间
+2. **你手动在 AOMEI 里把 E → D → C 依次拖拽** → 3 分钟搞定
+3. **点击套用，重启** → PreOS 模式自动执行 10~30 分钟，C 盘扩容完成
+
+> 💡 **为什么第二步必须手动？** 我们试过 pywinauto、SendInput、UIAutomation、屏幕坐标计算……全部失败。AOMEI 的 MFC 界面是 AI 自动化的黑洞。花 3 分钟自己拖拽，比 AI 在里面无限死循环高效 100 倍。
+
+---
+
+## 🛠️ 用到的工具
+
+| 工具 | 做什么 | 谁操作 |
+|------|--------|--------|
+| QoderWork CN | 检查磁盘、运行 diskpart、管理 BitLocker | 🤖 AI |
+| AOMEI Partition Assistant | 拖拽移动分区、扩展 C 盘 | 👤 你 |
+| diskpart | 删除目标分区 | 🤖 AI |
+| manage-bde | 暂停/恢复 BitLocker 加密 | 🤖 AI |
+
+---
+
+## 🧠 核心洞察
+
+**AI 和 GUI 操作的边界划分，是本仓库最有价值的部分。**
+
+Windows 原生磁盘管理不支持移动分区 → 必须用 AOMEI → AOMEI 的 MFC 控件不暴露给无障碍 API → AI 无法可靠点击右键菜单 → 但 AI 擅长跑命令、查状态、写脚本。所以正确的分工是：
+
+```
+AI 负责 CLI（命令行）→ 你负责 GUI（拖拽）→ AI 接手后续（BitLocker 恢复）
+```
+
+这层边界一旦划清，整个流程顺畅如水。划不清，就会像我们最初那样，在自动化 GUI 的路上反复撞墙。
+
+---
+
+## 🚀 快速开始
+
+```bash
+git clone https://github.com/web-seeker/pc-ops.git
+```
+
+打开 **[📘 分区操作指南](分区操作指南.md)** 开始阅读。
+
+> ⚠️ **操作前务必完整阅读文档中的免责声明和注意事项。磁盘操作有不可逆风险，请确认数据已备份。**
+
+---
+
+## 📁 文件清单
+
+```
+pc-ops/
+├── 分区操作指南.md                           # 👈 先看这个
+├── disk-partition-merge-bitlocker-skill.md  # 完整技能文档（技术向）
+├── aomei-main-interface.png                 # 操作完成后的分区布局
+├── aomei-resize-move.png                    # 右键菜单「调整/移动分区」
+├── aomei-apply-button.png                   # 「套用」按钮位置
+├── aomei-apply-restart.png                  # 执行确认与重启提示
+├── aomei-language-menu.png                  # 语言设置路径
+└── README.md
+```
+
+---
+
+## 📝 License
+
+MIT · 随便用，后果自负（详见文档内免责声明）
+
+---
+
+<p align="center">
+  <sub>🤖 由 QoderWork 辅助生成 · 所有步骤已实际操作验证 · 2026.06</sub>
+</p>
