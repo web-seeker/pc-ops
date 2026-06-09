@@ -30,6 +30,7 @@
 |------|------|
 | **[📘 F盘空间合并至C盘操作全流程指南](F盘空间合并至C盘操作全流程指南.md)** | 主文档——图文并茂的完整操作流程，从检查磁盘到 BitLocker 恢复，每一步都有截图 |
 | **[📄 技能文档](disk-partition-merge-bitlocker-skill.md)** | 技术向全记录——完整的 PowerShell 命令、AOMEI 操作细节、故障排查手册 |
+| **[🔍 清除残留SID账户操作指南](清除残留SID账户操作指南.md)** | 文件权限中出现「未知账户(S-1-5-21-xxx)」？从扫描到清除到验证，一条龙操作指南 |
 
 附带 5 张截图，覆盖所有关键操作节点：右键菜单、拖拽分区、套用按钮、执行确认、语言设置。
 
@@ -88,6 +89,7 @@ git clone https://github.com/web-seeker/pc-ops.git
 pc-ops/
 ├── F盘空间合并至C盘操作全流程指南.md               # 👈 先看这个
 ├── disk-partition-merge-bitlocker-skill.md  # 完整技能文档（技术向）
+├── 清除残留SID账户操作指南.md                    # 文件权限清理指南
 ├── aomei-main-interface.png                 # 操作完成后的分区布局
 ├── aomei-resize-move.png                    # 右键菜单「调整/移动分区」
 ├── aomei-apply-button.png                   # 「套用」按钮位置
