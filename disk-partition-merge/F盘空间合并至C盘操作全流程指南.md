@@ -135,13 +135,13 @@ AOMEI 界面操作，三步走：
 
 **先推 E 盘**：右键 E 盘 → 「调整/移动分区」→ 把分区块拖到最右边 → 确定
 
-![右键菜单 - 调整/移动分区](file:///C:/Users/gofor/.qoderworkcn/workspace/mq68ka84675lrmfw/outputs/aomei-resize-move.png)
+![右键菜单 - 调整/移动分区](aomei-resize-move.png)
 
 **再推 D 盘**：右键 D 盘 → 「调整/移动分区」→ 把分区块拖到最右边 → 确定
 
 **最后扩 C 盘**：右键 C 盘 → 「调整/移动分区」→ 把右侧边界拖到最右 → 确定
 
-![AOMEI 主界面 - 分区布局](file:///C:/Users/gofor/.qoderworkcn/workspace/mq68ka84675lrmfw/outputs/aomei-main-interface.png)
+![AOMEI 主界面 - 分区布局](aomei-main-interface.png)
 
 > C 盘应该从 195GB 变为约 368GB。
 
@@ -165,11 +165,11 @@ AOMEI 界面操作，三步走：
 
 1. **点击顶部工具栏的「套用」按钮**（绿色勾号 ✓）
 
-![AOMEI 套用按钮](file:///C:/Users/gofor/.qoderworkcn/workspace/mq68ka84675lrmfw/outputs/aomei-apply-button.png)
+![AOMEI 套用按钮](aomei-apply-button.png)
 
 2. 弹出确认对话框后，检查操作列表无误，点击「执行」
 
-![AOMEI 执行对话框](file:///C:/Users/gofor/.qoderworkcn/workspace/mq68ka84675lrmfw/outputs/aomei-apply-restart.png)
+![AOMEI 执行对话框](aomei-apply-restart.png)
 
 3. 系统提示需要重启，点击「确认重启」
 
@@ -214,7 +214,7 @@ AOMEI 安装后默认界面为繁体中文：
 2. 选择「**設定**」（设置）图标
 3. 在语言选项中查找中文
 
-![AOMEI 语言设置菜单](file:///C:/Users/gofor/.qoderworkcn/workspace/mq68ka84675lrmfw/outputs/aomei-language-menu.png)
+![AOMEI 语言设置菜单](aomei-language-menu.png)
 
 > **注意**：目前仅提供**繁体中文**，不提供简体中文选项。繁体用词差异一览：「套用」= 应用、「調整」= 调整、「分割區」= 分区。操作流程完全一致，不影响使用。
 

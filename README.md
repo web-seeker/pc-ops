@@ -1,73 +1,91 @@
 <p align="center">
   <img src="https://img.shields.io/badge/platform-Windows-blue?style=flat-square" alt="Windows">
-  <img src="https://img.shields.io/badge/tools-AOMEI%20%2B%20diskpart-green?style=flat-square" alt="Tools">
+  <img src="https://img.shields.io/badge/tools-PowerShell%20%2B%20AOMEI-green?style=flat-square" alt="Tools">
   <img src="https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square" alt="MIT">
   <img src="https://img.shields.io/badge/verified-2026.06-success?style=flat-square" alt="Verified">
 </p>
 
 # pc-ops 🖥️
 
-**C 盘红了？删了个废弃分区不知道怎么合并回去？BitLocker 锁着不敢动？**
+**个人电脑运维实战手册 —— 用 AI 桌面助手辅助搞定磁盘、权限、系统配置等日常操作。**
 
-这个仓库记录了用 **AI 桌面助手 + 第三方分区工具** 搞定 Windows 磁盘扩容的全过程——从 195GB 吃到 368GB，每一步都有截图、命令和踩坑说明。不止告诉你「怎么做」，还会告诉你「AI 在这里栽过什么跟头」。
-
----
-
-## 📊 实际战果
-
-```
-扩容前  [C: 195GB ████████░░░░░░░░] 天天弹窗「磁盘空间不足」
-扩容后  [C: 368GB ████████████████░] 半年内不用再清理
-```
-
-一次操作，省下以后每个月清理磁盘的焦虑时间。
+每项技能独立成章，图文并茂，含完整命令和踩坑记录。不止告诉你「怎么做」，更会告诉你「AI 在哪些地方栽过跟头、为什么」。
 
 ---
 
-## 🎯 这里有什么
+## 📦 技能模块
 
-| 文档 | 内容 |
+### 🗂️ 磁盘分区合并
+
+> 删除废弃分区 → 释放 173GB → 合并到 C 盘 → 恢复 BitLocker 加密
+
+```
+扩容前  [C: 195GB ████████░░░░░░░░]
+扩容后  [C: 368GB ████████████████░]
+```
+
+| 文档 | 说明 |
 |------|------|
-| **[📘 F盘空间合并至C盘操作全流程指南](F盘空间合并至C盘操作全流程指南.md)** | 主文档——图文并茂的完整操作流程，从检查磁盘到 BitLocker 恢复，每一步都有截图 |
-| **[📄 技能文档](disk-partition-merge-bitlocker-skill.md)** | 技术向全记录——完整的 PowerShell 命令、AOMEI 操作细节、故障排查手册 |
-| **[🔍 清除残留SID账户操作指南](清除残留SID账户操作指南.md)** | 文件权限中出现「未知账户(S-1-5-21-xxx)」？从扫描到清除到验证，一条龙操作指南 |
+| [📘 全流程操作指南](disk-partition-merge/F盘空间合并至C盘操作全流程指南.md) | 图文并茂，每步有截图。含免责声明 |
+| [📄 技能文档](disk-partition-merge/disk-partition-merge-bitlocker-skill.md) | 技术向全记录，完整 PowerShell 命令与故障排查 |
 
-附带 5 张截图，覆盖所有关键操作节点：右键菜单、拖拽分区、套用按钮、执行确认、语言设置。
+包含 5 张 AOMEI 操作截图（主界面、右键菜单、套用按钮、执行确认、语言设置）。
 
----
-
-## ⚡ 三句话说完
-
-1. **AI 用 diskpart 删掉 F 盘** → 释放 173GB 未分配空间
-2. **你手动在 AOMEI 里把 E → D → C 依次拖拽** → 3 分钟搞定
-3. **点击套用，重启** → PreOS 模式自动执行 10~30 分钟，C 盘扩容完成
-
-> 💡 **为什么第二步必须手动？** 我们试过 pywinauto、SendInput、UIAutomation、屏幕坐标计算……全部失败。AOMEI 的 MFC 界面是 AI 自动化的黑洞。花 3 分钟自己拖拽，比 AI 在里面无限死循环高效 100 倍。
+> 💡 AI 负责命令行（diskpart / manage-bde），你花 3 分钟手动拖拽分区。AOMEI 的 MFC 界面是 AI 自动化的黑洞。
 
 ---
 
-## 🛠️ 用到的工具
+### 🔍 清除残留 SID 账户
 
-| 工具 | 做什么 | 谁操作 |
-|------|--------|--------|
-| QoderWork CN | 检查磁盘、运行 diskpart、管理 BitLocker | 🤖 AI |
-| AOMEI Partition Assistant | 拖拽移动分区、扩展 C 盘 | 👤 你 |
-| diskpart | 删除目标分区 | 🤖 AI |
-| manage-bde | 暂停/恢复 BitLocker 加密 | 🤖 AI |
+> 文件权限中出现「未知账户(S-1-5-21-xxx)」→ 全盘扫描 → 逐项清除 → 验证无残留
+
+| 文档 | 说明 |
+|------|------|
+| [📘 操作指南](sid-cleanup/清除残留SID账户操作指南.md) | 覆盖 icacls、PowerShell ACL、注册表、任务计划、服务账户 |
+
+包含权限条目示例截图（其他账户已打码）。
+
+> 💡 `Get-Acl` + `Set-Acl` 比手动翻 GUI 属性窗口快十倍。AI 写脚本三分钟扫完整个 ProgramData。
 
 ---
 
-## 🧠 核心洞察
+### 📦 模块扩展
 
-**AI 和 GUI 操作的边界划分，是本仓库最有价值的部分。**
+每个技能模块独立一个文件夹，文档和截图自包含。新增技能只需：
 
-Windows 原生磁盘管理不支持移动分区 → 必须用 AOMEI → AOMEI 的 MFC 控件不暴露给无障碍 API → AI 无法可靠点击右键菜单 → 但 AI 擅长跑命令、查状态、写脚本。所以正确的分工是：
+1. 新建一个文件夹（文件夹名即技能标识）
+2. 放入文档和截图
+3. 在下方添加一个模块卡片
 
 ```
-AI 负责 CLI（命令行）→ 你负责 GUI（拖拽）→ AI 接手后续（BitLocker 恢复）
+pc-ops/
+├── disk-partition-merge/     ← 示例：磁盘分区合并
+├── sid-cleanup/              ← 示例：清除残留 SID
+├── your-new-skill/           ← 你的新技能
+└── README.md
 ```
 
-这层边界一旦划清，整个流程顺畅如水。划不清，就会像我们最初那样，在自动化 GUI 的路上反复撞墙。
+---
+
+## 📁 仓库结构
+
+```
+pc-ops/
+├── README.md
+│
+├── disk-partition-merge/
+│   ├── F盘空间合并至C盘操作全流程指南.md
+│   ├── disk-partition-merge-bitlocker-skill.md
+│   ├── aomei-main-interface.png
+│   ├── aomei-resize-move.png
+│   ├── aomei-apply-button.png
+│   ├── aomei-apply-restart.png
+│   └── aomei-language-menu.png
+│
+└── sid-cleanup/
+    ├── 清除残留SID账户操作指南.md
+    └── sid-permission-example.png
+```
 
 ---
 
@@ -77,32 +95,15 @@ AI 负责 CLI（命令行）→ 你负责 GUI（拖拽）→ AI 接手后续（B
 git clone https://github.com/web-seeker/pc-ops.git
 ```
 
-打开 **[📘 F盘空间合并至C盘操作全流程指南](F盘空间合并至C盘操作全流程指南.md)** 开始阅读。
+进入对应模块文件夹，打开 `.md` 文档即可。每个模块独立自包含。
 
-> ⚠️ **操作前务必完整阅读文档中的免责声明和注意事项。磁盘操作有不可逆风险，请确认数据已备份。**
-
----
-
-## 📁 文件清单
-
-```
-pc-ops/
-├── F盘空间合并至C盘操作全流程指南.md               # 👈 先看这个
-├── disk-partition-merge-bitlocker-skill.md  # 完整技能文档（技术向）
-├── 清除残留SID账户操作指南.md                    # 文件权限清理指南
-├── aomei-main-interface.png                 # 操作完成后的分区布局
-├── aomei-resize-move.png                    # 右键菜单「调整/移动分区」
-├── aomei-apply-button.png                   # 「套用」按钮位置
-├── aomei-apply-restart.png                  # 执行确认与重启提示
-├── aomei-language-menu.png                  # 语言设置路径
-└── README.md
-```
+> ⚠️ 操作前务必完整阅读文档中的免责声明和注意事项。磁盘和权限操作有不可逆风险，请确认数据已备份。
 
 ---
 
 ## 📝 License
 
-MIT · 随便用，后果自负（详见文档内免责声明）
+MIT · 详见各文档内免责声明
 
 ---
 
