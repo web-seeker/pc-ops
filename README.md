@@ -35,6 +35,36 @@
 
 ---
 
+### 🔐 Token 安全检测与隐私保护
+
+> Token、API Key、密钥等敏感信息的安全管理指南
+
+当在聊天中发送 Token 或工具要求提供 Token 时，本模块提供完整的安全检测、风险评估和最佳实践方案。
+
+**核心功能**：
+- Token 泄露检测（日志文件、GitHub 授权、浏览器扩展）
+- 风险等级评估（🟢 低 / 🟡 中等 / 🔴 高）
+- GitHub Token 安全使用（gh auth login / Fine-Grained PAT）
+- 紧急处理流程与最佳实践
+
+| 文档 | 说明 |
+|------|------|
+| [📄 Token 安全 Skill](token-security/SKILL.md) | 完整的 Token 安全指南，包含检测方法、风险评估、安全配置模板 |
+
+**推荐的安全配置**：
+
+| 项目 | 推荐设置 |
+|------|----------|
+| **Token 类型** | Fine-Grained PAT |
+| **仓库访问** | 只选需要的仓库 |
+| **权限** | Contents: Read and write |
+| **有效期** | ≤ 7 天 |
+| **传递方式** | 环境变量，不经过聊天 |
+
+> 💡 优先使用 `gh auth login` 命令行授权，Token 自动安全存储。如果必须提供 Token，通过环境变量传递，不要在聊天中直接发送。
+
+---
+
 ### 🔍 清除残留 SID 账户
 
 > 文件夹 → 属性 → 安全 → 发现一个「未知账户(S-1-5-21-xxx)」删不掉？
@@ -84,9 +114,12 @@ pc-ops/
 │   ├── aomei-apply-restart.png
 │   └── aomei-language-menu.png
 │
-└── sid-cleanup/
-    ├── 清除残留SID账户操作指南.md
-    └── sid-permission-example.png
+├── sid-cleanup/
+│   ├── 清除残留SID账户操作指南.md
+│   └── sid-permission-example.png
+│
+└── token-security/
+    └── SKILL.md
 ```
 
 ---
