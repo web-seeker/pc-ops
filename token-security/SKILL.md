@@ -1,17 +1,15 @@
 ---
 name: token-security-audit
-description: Token 安全检测与隐私保护。当用户提到 Token、API Key、密钥、密码、隐私、安全检测、token泄露检测时自动触发。用于检查 Token 是否泄露、安全使用最佳实践、隐私风险评估。
+description: Token 安全检测与隐私保护。当用户提到 Token、API Key、密钥、密码、隐私、安全检测、token泄露检测、GitHub SSH、SSH认证时自动触发。用于检查 Token 是否泄露、安全使用最佳实践、隐私风险评估、SSH vs Token 方案选择。
 ---
 
 # Token 安全检测与隐私保护助手
-
-## 概述
 
 当检测到 Token、API Key、密钥等敏感信息相关问题时，本技能将帮助用户：
 - 检测 Token 是否已被记录或泄露
 - 评估隐私风险等级
 - 提供安全处理建议
-- 指导正确的 Token 管理实践
+- 指导正确的 Token / SSH 认证管理实践
 
 ---
 
@@ -24,285 +22,148 @@ description: Token 安全检测与隐私保护。当用户提到 Token、API Key
 - "Token 注意事项"
 - "API Key 隐私"
 - "密钥安全管理"
+- "GitHub SSH"
+- "不用 Token 怎么认证"
 
 ### 常见问题
 1. 在聊天中发送了 Token，担心泄露
 2. 工具要求提供 Token，不知道是否安全
 3. 想检查本地是否有 Token 被记录
 4. 不知道如何安全管理 Token
+5. 想用 SSH 替代 Token 认证 GitHub
+
+---
+
+## 认证方案选择：SSH vs Token
+
+> **首选推荐：SSH 认证（零 Token 暴露）**
+> Token 需要通过对话文本传递，有泄露风险；SSH 公钥可以公开，私钥永不离开本地。GitHub 官方推荐 SSH 作为首选认证方式。
+
+### 方案对比
+
+| 维度 | SSH 认证 | Token 认证 |
+|------|----------|-----------|
+| 凭证传递 | 公钥可公开，私钥不出本地 | Token 需传递给 AI/工具 |
+| 安全风险 | 极低（私钥不离开本地） | 中高（Token 可能泄露） |
+| GitHub 官方态度 | 首选推荐 | 次选 |
+| 适用场景 | 所有 Git 操作 | API 调用、精细化权限 |
+
+### 👉 需要用 SSH？跳转到 [GitHub SSH 认证模块](#github-ssh-认证流程)
 
 ---
 
 ## 检测流程
 
-### 第一步：检查日志文件
-
-检查以下常见日志位置是否包含 Token：
+### 第一步：检查本地日志/历史是否记录了 Token
 
 ```powershell
-# PowerShell 检查日志
-Get-ChildItem -Path "$env:USERPROFILE" -Recurse -Filter "*.log" -ErrorAction SilentlyContinue | 
-    Select-String -Pattern "TOKEN_PATTERN" | Select-Object Path
+# PowerShell 检查常见日志位置
+Get-ChildItem -Path "$env:USERPROFILE" -Recurse -Include "*.log","*.txt" -ErrorAction SilentlyContinue | 
+    Select-String -Pattern "ghp_|gho_|sk-|pt-|v1\." -List | Select-Object Path,LineNumber
 ```
 
-### 第二步：检查 GitHub 授权
+```bash
+# Bash 检查 shell 历史
+grep -l "ghp_\|gho_\|sk-\|pt-" ~/.bash_history ~/.zsh_history 2>/dev/null
+```
+
+### 第二步：检查 GitHub 授权记录
 
 访问以下页面检查异常授权：
-- https://github.com/settings/applications
-- https://github.com/settings/tokens
+- https://github.com/settings/applications — 查看 OAuth 应用授权
+- https://github.com/settings/tokens — 查看 Personal Access Token
+- https://github.com/settings/ssh — 查看 SSH 公钥（推荐用这个代替 Token）
 
-### 第三步：检查浏览器扩展
+### 第三步：检查环境变量
 
-检查已安装的浏览器扩展，移除可疑或不需要的扩展。
+```powershell
+# 检查环境变量中是否有 Token
+Get-ChildItem env: | Where-Object { $_.Value -match "ghp_|sk-|pt-" } | Select-Object Name,Value
+```
 
 ---
 
 ## 风险等级评估
 
-| 等级 | 说明 | 颜色 |
-|------|------|------|
-| 🟢 低风险 | Token 未被成功使用，仅出现在错误日志中 | 绿色 |
-| 🟡 中等风险 | Token 被记录在多个位置或被使用过 | 黄色 |
-| 🔴 高风险 | Token 被传播到未知来源或被恶意使用 | 红色 |
+| 等级 | 说明 | 颜色 | 建议动作 |
+|------|------|------|----------|
+| 🟢 低风险 | Token 未被使用，仅出现在错误日志 | 绿色 | 清理日志，更换 Token |
+| 🟡 中等风险 | Token 被记录在多个位置或被使用过 | 黄色 | 立即撤销，审查访问记录 |
+| 🔴 高风险 | Token 被传播或出现异常 API 调用 | 红色 | 立即撤销+强制改密+通知平台 |
 
 ---
 
-## 安全建议
+## 如果 Token 已被泄露：紧急处理
 
-### 如果 Token 已被泄露
-
-1. **立即撤销 Token**
-   - 前往 Token 发行平台（如 GitHub、Qoder 等）
-   - 在设置中撤销该 Token
-   - 生成新的 Token 替代
-
-2. **清理本地记录**
-   ```powershell
-   # 删除包含 Token 的日志文件
-   Remove-Item "LOG_FILE_PATH" -Force
-   ```
-
-3. **检查使用记录**
-   - 查看 Token 的 API 调用历史
-   - 确认是否有异常访问
-
-### 如果需要在聊天中提供 Token
-
-**❌ 不推荐的做法**
-```
-请给我你的 Token：pt-xxxxx
-```
-
-**✅ 推荐的做法**
-
-| 场景 | 正确做法 |
-|------|---------|
-| 工具需要 Token | 让工具直接调用 API，不需要中转 Token |
-| 必须提供 Token | 使用一次性 Token，用完立即撤销 |
-| Token 有效期 | 设置短有效期（如 1 小时） |
-| Token 权限 | 只授予最小必要权限 |
-
-### 正确的回应模板
-
-当用户询问如何安全回应 Token 请求时：
-
-**选项 1：拒绝并解释**
-```
-不好意思，Token 不适合在聊天中发送。
-请告诉我您需要 Token 做什么，我来帮您操作。
-```
-
-**选项 2：提供替代方案**
-```
-我理解您需要 Token。但出于安全考虑，请让我直接调用 API，
-不需要中转 Token。
-```
-
-**选项 3：要求安全配置**
-```
-请在 [平台名称] 的设置中配置 Token，而不是通过聊天发送。
-```
+1. **立即撤销 Token** — 前往对应平台设置页撤销
+2. **审查访问记录** — 查看 Token 的 API 调用历史，确认是否有异常
+3. **清理本地记录** — 删除包含 Token 的日志/历史文件
+4. **通知平台** — 如确认被恶意使用，联系平台安全团队
+5. **加强防护** — 启用 2FA，更换为 SSH 认证
 
 ---
 
-## 最佳实践
+## GitHub Token 安全使用指南（当无法使用 SSH 时）
 
-### Token 管理
-
-1. **永远不要在代码中硬编码 Token**
-   ```bash
-   # ❌ 错误
-   API_KEY="pt-xxxxx"
-   
-   # ✅ 正确 - 使用环境变量
-   API_KEY=$ENV_API_KEY
-   ```
-
-2. **使用 .env 文件管理敏感信息**
-   ```bash
-   # .env 文件（加入 .gitignore）
-   API_KEY=your_token_here
-   ```
-
-3. **定期轮换 Token**
-   - 设置定期更换提醒
-   - 使用完立即撤销
-
-4. **最小权限原则**
-   - 只授予必需的权限
-   - 避免使用具有完整权限的 Token
-
-### 工具使用
-
-1. **优先使用官方 SDK/CLI**
-   - 减少手动传递 Token 的需求
-   - 官方工具通常有更好的安全措施
-
-2. **使用安全的连接方式**
-   - 优先使用 HTTPS
-   - 避免在 URL 中传递 Token
-
-3. **记录 Token 使用日志**
-   - 监控异常访问
-   - 及时发现潜在问题
-
----
-
-## GitHub Token 安全使用指南
-
-### 场景：AI 工具需要 GitHub Token 上传代码
-
-当 AI 工具要求提供 GitHub Token 时，应按以下优先级处理：
-
-### ✅ 最佳方案：使用 GitHub CLI (gh)
-
-**最安全的方式是使用 `gh` 命令行工具授权：**
+### ✅ 最佳方案：使用 GitHub CLI (`gh`)
 
 ```bash
-# 1. 安装 GitHub CLI（如果未安装）
-# Windows: winget install GitHub.cli
-# macOS: brew install gh
-# Linux: curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-
-# 2. 在终端登录（会打开浏览器授权，不需要手动给 Token）
+# 浏览器授权，Token 不经过聊天
 gh auth login
-
-# 3. 选择 HTTPS 而非 SSH
-# 4. 选择登录身份
-# 5. 完成浏览器授权
+# 选择：GitHub.com → HTTPS → Login with a web browser
 ```
 
-**优势：**
-- ✅ Token 自动安全存储，不会经过聊天
-- ✅ 可选择只授权特定仓库
-- ✅ 可随时撤销授权
+**优势：** Token 自动安全存储，可选择只授权特定仓库，可随时撤销。
 
-### ✅ 次优方案：GitHub Fine-Grained PAT
-
-如果 AI 工具要求 Token，请创建**最小权限 Token**：
-
-#### 创建 Token 步骤
-
-1. 访问：https://github.com/settings/tokens/new
-
-2. 配置 Token：
+### ✅ 次优方案：Fine-Grained PAT（最小权限）
 
 | 设置项 | 推荐值 |
 |--------|--------|
-| **Token 名称** | `For-AI-Tool-YYYYMMDD` |
-| **Expiration** | `7 days` 或更短 |
-| **Repository access** | `Only select repositories`，只选需要的仓库 |
-| **Permissions** | 只勾选 ☑️ `Contents: Read and write` |
+| Token 名称 | `For-AI-Tool-YYYYMMDD` |
+| Expiration | `7 days` 或更短 |
+| Repository access | `Only select repositories` |
+| Permissions | 只勾选 `Contents: Read and write` |
 
-#### 将 Token 提供给 AI 工具
-
-**❌ 不要在聊天中直接粘贴 Token**
-
-**✅ 正确做法：通过环境变量传递**
-
+**传递方式（❌ 不要粘贴到聊天）：**
 ```bash
-# 在终端设置环境变量（仅当前会话有效）
+# 在终端设置环境变量
 $env:GITHUB_TOKEN = "ghp_xxxxxxxxxxxx"
-
-# 告诉 AI
-请使用环境变量 $env:GITHUB_TOKEN 进行 Git 操作，
-不要在回复中显示或提及 Token 内容。
+# 然后告诉 AI：请用 $env:GITHUB_TOKEN，不要显示它
 ```
 
-### ⚠️ 绝对不要做的事
+### ⚠️ 绝对不要做
 
-| ❌ 错误做法 | 风险等级 |
-|-----------|----------|
+| ❌ 错误做法 | 风险 |
+|-----------|------|
 | 在聊天中直接粘贴 Token | 🔴 极高 |
-| 把 Token 放在代码里提交 | 🔴 极高 |
-| 使用具有 admin 权限的 Token | 🔴 高 |
-| 使用永不过期的 Token | 🟡 中等 |
-| 授权所有仓库的读写权限 | 🟡 中等 |
+| Token 硬编码在代码里 | 🔴 极高 |
+| 使用 admin 权限 Token | 🔴 高 |
+| 永不过期的 Token | 🟡 中等 |
 
-### 📋 快速决策流程
+---
 
-```
-需要 GitHub Token？
-        │
-        ├── 用 gh auth login？ ──→ ✅ 最佳选择
-        │
-        └── 必须给 Token？
-                │
-                ├── 创建 Fine-Grained PAT
-                │      ├── 只授权需要的仓库
-                │      ├── 只给 Contents 权限
-                │      └── 设置短有效期（≤7天）
-                │
-                └── 告诉 AI：
-                    "请使用环境变量 $GITHUB_TOKEN，
-                     不要在回复中显示它"
-```
+## 常见 Token 格式（识别用）
 
-### 🔒 推荐的安全配置
-
-| 项目 | 推荐设置 |
+| 平台 | 格式前缀 |
 |------|----------|
-| **Token 类型** | Fine-Grained PAT |
-| **仓库访问** | 只选需要的仓库 |
-| **权限** | Contents: Read and write |
-| **有效期** | ≤ 7 天 |
-| **传递方式** | 环境变量，不经过聊天 |
-
----
-
-## 常见 Token 格式
-
-| 平台 | 格式 | 示例前缀 |
-|------|------|----------|
-| GitHub | ghp_ | `ghp_xxxxx` |
-| GitHub | gho_ | `gho_xxxxx` |
-| Qoder | pt- | `pt-xxxxx` |
-| OpenAI | sk- | `sk-xxxxx` |
-| Vercel | v1. | `v1.xxxxx` |
-
----
-
-## 紧急处理流程
-
-如果怀疑 Token 已被恶意使用：
-
-1. **立即撤销 Token**
-2. **检查账户活动日志**
-3. **通知平台安全团队**
-4. **评估可能的损失**
-5. **加强安全措施**
+| GitHub PAT | `ghp_` |
+| GitHub OAuth | `gho_` |
+| OpenAI | `sk-` |
+| Qoder | `pt-` |
+| Vercel | `v1.` |
 
 ---
 
 ## 总结
 
-- **预防为主**：尽量避免在聊天中发送 Token
-- **最小暴露**：只授予最小必要权限
-- **定期检查**：定期审查 Token 使用情况
-- **及时响应**：发现泄露立即撤销并更换
+- **首选 SSH，次选 Token** — SSH 私钥不离开本地，从根本上避免 Token 泄露
+- **预防为主** — 尽量避免在聊天中发送 Token
+- **最小暴露** — Token 只授予最小必要权限，短期有效
+- **定期检查** — 定期审查 GitHub 授权记录
+
 ---
 
-## 模块：github-ssh-auth
+## GitHub SSH 认证流程
 
 ---
 name: github-ssh-auth
