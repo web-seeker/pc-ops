@@ -1,13 +1,13 @@
 <p align="center">
   <img src="https://img.shields.io/badge/platform-Windows-blue?style=flat-square" alt="Windows">
-  <img src="https://img.shields.io/badge/tools-PowerShell%20%2B%20AOMEI-green?style=flat-square" alt="Tools">
+  <img src="https://img.shields.io/badge/tools-PowerShell%20%2B%20AOMEI%20%2B%20Git%20SSH-green?style=flat-square" alt="Tools">
   <img src="https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square" alt="MIT">
   <img src="https://img.shields.io/badge/verified-2026.06-success?style=flat-square" alt="Verified">
 </p>
 
 # pc-ops 🖥️
 
-**个人电脑运维实战手册 —— 用 AI 桌面助手辅助搞定磁盘、权限、系统配置等日常操作。**
+**个人电脑运维实战手册 —— 用 AI 桌面助手辅助搞定磁盘、权限、安全认证、系统配置等日常操作。**
 
 每项技能独立成章，图文并茂，含完整命令和踩坑记录。不止告诉你「怎么做」，更会告诉你「AI 在哪些地方栽过跟头、为什么」。
 
@@ -35,33 +35,48 @@
 
 ---
 
-### 🔐 Token 安全检测与隐私保护
+### 🔐 安全认证：Token & SSH
 
-> Token、API Key、密钥等敏感信息的安全管理指南
+> **Token 泄露检测 + GitHub SSH 安全认证** — 从「怎么安全用 Token」到「彻底不用 Token」
 
-当在聊天中发送 Token 或工具要求提供 Token 时，本模块提供完整的安全检测、风险评估和最佳实践方案。
+本模块覆盖两类核心场景：
 
-**核心功能**：
-- Token 泄露检测（日志文件、GitHub 授权、浏览器扩展）
-- 风险等级评估（🟢 低 / 🟡 中等 / 🔴 高）
-- GitHub Token 安全使用（gh auth login / Fine-Grained PAT）
-- 紧急处理流程与最佳实践
+#### 场景 A：必须用 Token 时
+
+当 AI 工具要求提供 GitHub Token 时：
+
+| 方案优先级 | 推荐方式 |
+|-----------|---------|
+| ✅ 最佳 | `gh auth login` — 浏览器授权，Token 不经过聊天 |
+| ✅ 次优 | Fine-Grained PAT — 最小权限 + ≤7天有效期 + 环境变量传递 |
+
+**绝对不要做的事：**
+- ❌ 在聊天中直接粘贴 Token
+- ❌ Token 硬编码在代码里提交
+- ❌ 使用 admin 权限或永不过期的 Token
+
+#### 场景 B：🔥 推荐 — 用 SSH 替代 Token（零暴露）
+
+> **为什么？** Token 需要通过对话文本传递，有泄露风险。SSH 公钥可以公开，私钥永不离开本地。GitHub 官方推荐 SSH 为首选认证方式。
+
+```
+生成密钥对 → 输出公钥(安全公开) → 用户自行添加到 GitHub → 验证连接
+全程零 Token，凭证不离开本地机器
+```
 
 | 文档 | 说明 |
 |------|------|
-| [📄 Token 安全 Skill](token-security/SKILL.md) | 完整的 Token 安全指南，包含检测方法、风险评估、安全配置模板 |
+| [📄 安全认证 Skill](token-security/SKILL.md) | Token 泄露检测 + SSH 认证双模块，含方案对比表、可执行的检测命令、SSH 四步标准流程 |
 
-**推荐的安全配置**：
+**推荐的安全配置对比：**
 
-| 项目 | 推荐设置 |
-|------|----------|
-| **Token 类型** | Fine-Grained PAT |
-| **仓库访问** | 只选需要的仓库 |
-| **权限** | Contents: Read and write |
-| **有效期** | ≤ 7 天 |
-| **传递方式** | 环境变量，不经过聊天 |
+| 维度 | Token（Fine-Grained PAT） | SSH 认证 |
+|------|--------------------------|---------|
+| 凭证传递 | 通过环境变量给 AI | 私钥不离开本地 |
+| 安全风险 | 中高 | 极低 |
+| 适用场景 | API 调用、精细化权限 | **所有 Git 操作（首选）** |
 
-> 💡 优先使用 `gh auth login` 命令行授权，Token 自动安全存储。如果必须提供 Token，通过环境变量传递，不要在聊天中直接发送。
+> 💡 **使用顺序：先尝试 SSH → 无法用时再用 Token**。Skill 文档内有完整的「给其他 AI 的简洁指令模板」，直接复制就能让任何 AI 帮你走 SSH 流程。
 
 ---
 
@@ -108,18 +123,14 @@ pc-ops/
 ├── disk-partition-merge/
 │   ├── F盘空间合并至C盘操作全流程指南.md
 │   ├── disk-partition-merge-bitlocker-skill.md
-│   ├── aomei-main-interface.png
-│   ├── aomei-resize-move.png
-│   ├── aomei-apply-button.png
-│   ├── aomei-apply-restart.png
-│   └── aomei-language-menu.png
+│   └── aomei-*.png (5张截图)
 │
 ├── sid-cleanup/
 │   ├── 清除残留SID账户操作指南.md
 │   └── sid-permission-example.png
 │
 └── token-security/
-    └── SKILL.md
+    └── SKILL.md          ← 双模块：Token安全检测 + SSH认证流程
 ```
 
 ---
@@ -143,5 +154,5 @@ MIT · 详见各文档内免责声明
 ---
 
 <p align="center">
-  <sub>🤖 由 QoderWork 辅助生成 · 所有步骤已实际操作验证 · 2026.06</sub>
+  <sub>🤖 由 WorkBuddy 辅助生成 · 所有步骤已实际操作验证 · 2026.06</sub>
 </p>
