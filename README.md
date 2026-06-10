@@ -37,7 +37,7 @@
 
 ### 🔐 安全认证：Token & SSH
 
-> **Token 泄露检测 + GitHub SSH 安全认证** — 从「怎么安全用 Token」到「彻底不用 Token」
+> **Token 泄露检测 + SSH/OAuth 安全认证** — 从「怎么安全用 Token」到「SSH/OAuth 彻底不用 Token」
 
 本模块覆盖两类核心场景：
 
@@ -66,17 +66,15 @@
 
 | 文档 | 说明 |
 |------|------|
-| [📄 安全认证 Skill](token-security/SKILL.md) | Token 泄露检测 + SSH 认证双模块，含方案对比表、可执行的检测命令、SSH 四步标准流程 |
+| [📄 安全认证 Skill](token-security/SKILL.md) | Token 泄露检测 + SSH/OAuth 三模块，含方案对比表、可执行的检测命令、SSH 四步标准流程 |
 
-**推荐的安全配置对比：**
+| 维度 | Token（Fine-Grained PAT） | GitHub SSH | ClawHub OAuth |
+|------|--------------------------|-----------|-------------|
+| 凭证传递 | 通过环境变量给 AI | 私钥不离开本地 | 浏览器授权，Token 存本地 |
+| 安全风险 | 中高 | 极低 | 低 |
+| 适用场景 | API 调用、精细化权限 | **Git 操作首选** | **Skill 发布首选** |
 
-| 维度 | Token（Fine-Grained PAT） | SSH 认证 |
-|------|--------------------------|---------|
-| 凭证传递 | 通过环境变量给 AI | 私钥不离开本地 |
-| 安全风险 | 中高 | 极低 |
-| 适用场景 | API 调用、精细化权限 | **所有 Git 操作（首选）** |
-
-> 💡 **使用顺序：先尝试 SSH → 无法用时再用 Token**。Skill 文档内有完整的「给其他 AI 的简洁指令模板」，直接复制就能让任何 AI 帮你走 SSH 流程。
+> 💡 **使用顺序：GitHub 用 SSH，ClawHub 用 OAuth → 无法用时再用 Token**。Skill 文档内有完整的「给其他 AI 的简洁指令模板」，直接复制就能让任何 AI 帮你走 SSH 流程。
 
 ---
 
