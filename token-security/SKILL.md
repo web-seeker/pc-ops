@@ -300,3 +300,92 @@ $env:GITHUB_TOKEN = "ghp_xxxxxxxxxxxx"
 - **最小暴露**：只授予最小必要权限
 - **定期检查**：定期审查 Token 使用情况
 - **及时响应**：发现泄露立即撤销并更换
+---
+
+## 模块：github-ssh-auth
+
+---
+name: github-ssh-auth
+description: GitHub SSH 安全认证流程 — 零 Token 暴露。当需要授权 WorkBuddy/AI 访问 GitHub 时使用。
+agent_created: true
+---
+
+# GitHub SSH 安全认证流程
+
+## 为什么用 SSH 而不是 Token
+
+- Token 需要通过对话文本传递，有泄露风险
+- SSH 公钥可以公开，私钥永不离开本地
+- GitHub 官方推荐 SSH 作为首选认证方式
+
+## 标准流程
+
+### 第一步：生成 SSH 密钥
+
+```bash
+# 检查是否已有密钥
+ls ~/.ssh/id_ed25519.pub 2>/dev/null && echo "已存在" || echo "需生成"
+
+# 如果没有，生成新密钥（ed25519 比 RSA 更快更安全）
+ssh-keygen -t ed25519 -C "your-label" -f ~/.ssh/id_ed25519 -N ""
+
+# 输出公钥（这串可以安全公开）
+cat ~/.ssh/id_ed25519.pub
+```
+
+### 第二步：将公钥添加到 GitHub
+
+1. 复制上一步输出的公钥（以 `ssh-ed25519` 开头的那一整行）
+2. 打开 https://github.com/settings/ssh/new
+3. Title：填任意标识（如 `workbuddy`、`macbook`）
+4. Key type：选择 `Authentication Key`
+5. Key：粘贴公钥
+6. 点击 "Add SSH key"
+
+### 第三步：验证连接
+
+```bash
+# 添加 GitHub 到 known_hosts（首次连接必须）
+ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+# 测试连接
+# 成功应返回：Hi <username>! You've successfully authenticated...
+ssh -T git@github.com
+```
+
+### 第四步：配置仓库使用 SSH
+
+```bash
+# 创建仓库时直接用 SSH 地址
+gh repo create REPO_NAME --public --source . --remote origin --push
+
+# 或手动设置已有仓库的远程地址
+git remote set-url origin git@github.com:USERNAME/REPO.git
+```
+
+## 安全原则速查
+
+| 可以公开 | 绝不能公开 |
+|---------|-----------|
+| 公钥 `.pub` 文件 | 私钥（无 `.pub` 后缀的文件） |
+| 公钥内容可贴到任何对话 | 私钥内容绝不出本地 |
+| GitHub 仓库 URL | 任何形式的 Token/密码 |
+
+## 给其他 AI 的简洁指令模板
+
+直接复制这段话发给任何 AI：
+
+> 帮我用 SSH 方式连接 GitHub：
+> 1. 生成 ed25519 密钥对（如果还没有）
+> 2. 把公钥输出给我，我自己去 GitHub 设置页添加
+> 3. 我添加完后告诉你，你验证连接
+> 全程不用 Token，不暴露任何凭证。
+
+## 常见问题
+
+| 问题 | 解决 |
+|------|------|
+| `Host key verification failed` | 运行 `ssh-keyscan github.com >> ~/.ssh/known_hosts` |
+| `Permission denied (publickey)` | 确认公钥已添加到 GitHub，检查 `ssh -T git@github.com` |
+| 想换用 HTTPS 协议 | `git remote set-url origin https://github.com/USER/REPO.git` |
+| 多 GitHub 账号管理 | 在 `~/.ssh/config` 配置不同 Host 别名 |
