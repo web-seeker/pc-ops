@@ -181,6 +181,9 @@ pc-ops/
 │   └── aomei-*.png (截图)
 ├── token-security/                ← 认证安全
 │   └── token-ssh-auth.md
+├── windows-shortcuts/          ← 快捷键速查
+│   ├── windows-shortcuts-skill.md
+│   └── win-*.png (2 张截图)
 └── sid-cleanup/                   ← 权限审计
     ├── README.md
     ├── 清除残留SID账户操作指南.md
@@ -195,7 +198,8 @@ pc-ops/
 git clone https://github.com/web-seeker/pc-ops.git
 ```
 
-**建议顺序**：磁盘清理 →（不够？）→ 分区合并 → 顺手配 SSH → 哪天发现「未知账户」→ SID 清理
+**建议顺序**：磁盘清理 →（不够？）→ 分区合并 → 顺手配 SSH → 顺手学几个快捷键 → windows-shortcuts
+> 哪天发现「未知账户」→ SID 清理
 
 > ⚠️ 磁盘和权限操作有不可逆风险。操作前完整阅读对应模块的免责声明。
 
@@ -208,4 +212,5 @@ MIT · 所有步骤已实际操作验证 · 2026.06
 <p align="center">
   <sub>Made with ❤️ by <a href="https://github.com/web-seeker">web-seeker</a></sub>
 </p>
+
 
