@@ -51,7 +51,7 @@
 
 #### Win + X — 系统工具箱
 
-<img src="windows-shortcuts/win-X.png" alt="Win+X 快捷菜单" width="400">
+<img src="windows-shortcuts/win-X.png" alt="Win+X 快捷菜单" width="320">
 
 右键开始按钮也能打开。一键直达 15+ 系统工具：PowerShell（管理员）、设备管理器、磁盘管理、事件查看器、任务管理器、网络连接、系统信息……
 
