@@ -78,6 +78,22 @@
 
 ---
 
+### 🧹 Windows 自带磁盘清理
+
+> 逐项拆解 cleanmgr.exe 每项清理内容 + Dism 后台清理引擎 + 三套一键 BAT/PowerShell 脚本
+
+网上 99% 的教程只说"勾选全部 → 确定"，但从不说左下角的「清理系统文件」按钮才是关键——不点它，Windows 更新缓存（5~30 GB）和 Windows.old（10~30 GB）根本不会出现。
+
+| 文档 | 说明 |
+|------|------|
+| [📘 完整操作指南](windows-disk-cleanup/windows-disk-cleanup-skill.md) | 13 项逐条拆解（含路径、安全评级） + CLI 自动化 + 三套脚本 + Dism 组件分析 + FAQ |
+
+本模块覆盖：标准模式 8 项 + 管理员模式 5 项、sageset/sagerun 机制、`Dism /AnalyzeComponentStore` 分析命令、CCleaner 横向对比、5 个高频故障场景。
+
+> 💡 磁盘清理是 AI 最擅长的教学场景——每项要不要清、为什么、在磁盘哪个位置，Human 去记太琐碎，AI 一个文档说清楚。
+
+---
+
 ### 🔍 清除残留 SID 账户
 
 > 文件夹 → 属性 → 安全 → 发现一个「未知账户(S-1-5-21-xxx)」删不掉？
@@ -122,6 +138,9 @@ pc-ops/
 │   ├── F盘空间合并至C盘操作全流程指南.md
 │   ├── disk-partition-merge-bitlocker-skill.md
 │   └── aomei-*.png (5张截图)
+│
+├── windows-disk-cleanup/
+│   └── windows-disk-cleanup-skill.md    ← 583行全指南：GUI拆解 + CLI + Dism + 脚本
 │
 ├── sid-cleanup/
 │   ├── 清除残留SID账户操作指南.md
