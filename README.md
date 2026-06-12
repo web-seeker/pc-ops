@@ -121,23 +121,23 @@ C盘红了       → Win+R → cleanmgr → 磁盘清理
 
 ### 操作流程（5 步截图）
 
-<img src="windows-disk-cleanup/1.png" alt="cleanmgr 主界面" width="500">
+<img src="windows-disk-cleanup/1.png" alt="cleanmgr 主界面" width="400">
 
 **Step 1**：`Win + R → cleanmgr → 选 C 盘 → 确定` — 此时只有回收站、临时文件等零头。
 
-<img src="windows-disk-cleanup/2.png" alt="清理系统文件按钮" width="500">
+<img src="windows-disk-cleanup/2.png" alt="清理系统文件按钮" width="400">
 
 **Step 2**：点击「清理系统文件」← **关键一步！** 需要管理员权限确认。
 
-<img src="windows-disk-cleanup/3.png" alt="系统文件清理列表" width="500">
+<img src="windows-disk-cleanup/3.png" alt="系统文件清理列表" width="400">
 
 **Step 3**：此时出现 Windows 更新清理（5~30 GB）、以前的 Windows 安装（10~30 GB）等大头。
 
-<img src="windows-disk-cleanup/4.png" alt="清理进度" width="500">
+<img src="windows-disk-cleanup/4.png" alt="清理进度" width="400">
 
 **Step 4**：勾选 → 确定 → 开始清理。Dism 后台清理 WinSxS 旧组件。
 
-<img src="windows-disk-cleanup/5.png" alt="命令行一键清理" width="500">
+<img src="windows-disk-cleanup/5.png" alt="命令行一键清理" width="400">
 
 **Step 5**：一键脚本代替手动操作：
 
