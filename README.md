@@ -1,130 +1,157 @@
 <p align="center">
   <img src="https://img.shields.io/badge/platform-Windows-blue?style=flat-square" alt="Windows">
-  <img src="https://img.shields.io/badge/tools-PowerShell%20%2B%20AOMEI%20%2B%20Git%20SSH-green?style=flat-square" alt="Tools">
+  <img src="https://img.shields.io/badge/tools-PowerShell%20%7C%20AOMEI%20%7C%20cleanmgr%20%7C%20SSH-green?style=flat-square" alt="Tools">
   <img src="https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square" alt="MIT">
   <img src="https://img.shields.io/badge/verified-2026.06-success?style=flat-square" alt="Verified">
 </p>
 
 # pc-ops 🖥️
 
-**个人电脑运维实战手册 —— 用 AI 桌面助手辅助搞定磁盘、权限、安全认证、系统配置等日常操作。**
+**个人电脑运维实战手册 —— 磁盘、安全、权限、清理，每项一个独立模块，拿来即用。**
 
-每项技能独立成章，图文并茂，含完整命令和踩坑记录。不止告诉你「怎么做」，更会告诉你「AI 在哪些地方栽过跟头、为什么」。
+四个模块覆盖一台 Windows 电脑最常见的四类运维需求：空间不够、认证不安全、权限有残留、清理不彻底。每个模块都是实际问题驱动，含完整命令、踩坑记录和 AI 分工建议。
 
 ---
 
-## 📦 技能模块
+## 📦 模块地图
 
-### 🗂️ 磁盘分区合并
+```
+         ┌─────────────── 你的电脑 ───────────────┐
+         │                                        │
+    ┌────▼────┐  ┌──────────┐  ┌──────────┐  ┌───▼────┐
+    │ 磁盘空间  │  │ 安全认证  │  │ 系统清理  │  │ 权限审计 │
+    └────┬────┘  └────┬─────┘  └────┬─────┘  └───┬────┘
+         │            │             │            │
+    ┌────▼────┐  ┌────▼─────┐  ┌───▼──────┐  ┌──▼──────┐
+    │ 分区合并  │  │Token/SSH │  │ 磁盘清理  │  │SID 清理  │
+    │ (物理)   │  │ (配置)   │  │ (软件)   │  │ (审计)   │
+    └─────────┘  └──────────┘  └──────────┘  └─────────┘
+```
 
-> 删除废弃分区 → 释放 173GB → 合并到 C 盘 → 恢复 BitLocker 加密
+---
+
+## 🗂️ 磁盘分区合并
+
+> **C 盘满了，旁边有个废盘 —— 物理扩容，一劳永逸。**
+
+| 维度 | 说明 |
+|------|------|
+| **解决什么问题** | C 盘空间不足，有废弃分区（如 F 盘）可以删除，把释放的空间合并到 C 盘 |
+| **涉及什么** | 删除分区 → 拖拽移动分区 → 扩展 C 盘 → 恢复 BitLocker 加密 |
+| **风险等级** | 🔴 高 —— 分区操作不可逆，数据丢失不可恢复 |
+| **需要什么工具** | AOMEI Partition Assistant（免费）、Windows diskpart / manage-bde |
+| **AI 做什么** | 命令行检查磁盘、删除分区、管理 BitLocker |
+| **你做什么** | AOMEI 里拖拽移动分区、点击「套用」执行 |
+
+**一句话区别**：这是**物理扩容**——真的动了磁盘分区表。C 盘从 195GB 变成 368GB，是物理边界变了，不是清缓存清出来的。
 
 ```
 扩容前  [C: 195GB ████████░░░░░░░░]
 扩容后  [C: 368GB ████████████████░]
 ```
 
-| 文档 | 说明 |
-|------|------|
-| [📘 全流程操作指南](disk-partition-merge/F盘空间合并至C盘操作全流程指南.md) | 图文并茂，每步有截图。含免责声明 |
-| [📄 技能文档](disk-partition-merge/disk-partition-merge-bitlocker-skill.md) | 技术向全记录，完整 PowerShell 命令与故障排查 |
+| 文档 | 受众 | 内容 |
+|------|------|------|
+| [📘 全流程操作指南](disk-partition-merge/F盘空间合并至C盘操作全流程指南.md) | 跟着操作的用户 | 每步带截图，含免责声明 |
+| [📄 技能参考](disk-partition-merge/disk-partition-merge-bitlocker-skill.md) | 想了解原理的用户 | 完整 PowerShell 命令 + 常见故障 + AI 自动化失败分析 |
 
-包含 5 张 AOMEI 操作截图（主界面、右键菜单、套用按钮、执行确认、语言设置）。
-
-> 💡 AI 负责命令行（diskpart / manage-bde），你花 3 分钟手动拖拽分区。AOMEI 的 MFC 界面是 AI 自动化的黑洞。
+> ⚡ **关键踩坑**：AOMEI 的 MFC 图形界面 AI 无法可靠自动化（管理员权限隔离、DPI 缩放偏差、非标准控件）。正确分工：AI 做命令行，你花 3 分钟手动拖拽。
 
 ---
 
-### 🔐 安全认证：Token & SSH
+## 🧹 Windows 自带磁盘清理
 
-> **Token 泄露检测 + SSH/OAuth 安全认证** — 从「怎么安全用 Token」到「SSH/OAuth 彻底不用 Token」
+> **C 盘红了但不想动分区 —— 用系统自带工具，安全清出 5~30 GB。**
 
-本模块覆盖两类核心场景：
-
-#### 场景 A：必须用 Token 时
-
-当 AI 工具要求提供 GitHub Token 时：
-
-| 方案优先级 | 推荐方式 |
-|-----------|---------|
-| ✅ 最佳 | `gh auth login` — 浏览器授权，Token 不经过聊天 |
-| ✅ 次优 | Fine-Grained PAT — 最小权限 + ≤7天有效期 + 环境变量传递 |
-
-**绝对不要做的事：**
-- ❌ 在聊天中直接粘贴 Token
-- ❌ Token 硬编码在代码里提交
-- ❌ 使用 admin 权限或永不过期的 Token
-
-#### 场景 B：🔥 推荐 — 用 SSH 替代 Token（零暴露）
-
-> **为什么？** Token 需要通过对话文本传递，有泄露风险。SSH 公钥可以公开，私钥永不离开本地。GitHub 官方推荐 SSH 为首选认证方式。
-
-```
-生成密钥对 → 输出公钥(安全公开) → 用户自行添加到 GitHub → 验证连接
-全程零 Token，凭证不离开本地机器
-```
-
-| 文档 | 说明 |
+| 维度 | 说明 |
 |------|------|
-| [📄 安全认证 Skill](token-security/SKILL.md) | Token 泄露检测 + SSH/OAuth 三模块，含方案对比表、可执行的检测命令、SSH 四步标准流程 |
+| **解决什么问题** | C 盘空间紧张，但不需要动分区表。清理 Windows 更新缓存、临时文件、Windows.old 等 |
+| **涉及什么** | cleanmgr.exe 图形界面 + Dism 命令行组件清理 |
+| **风险等级** | 🟢 低 —— 系统自带工具，不会误删关键文件 |
+| **需要什么工具** | Windows 自带 cleanmgr.exe + Dism.exe（零安装） |
+| **AI 做什么** | 逐项解释每个清理项是什么、能不能清、清完有什么后果 |
+| **你做什么** | 勾选 → 点确定，或丢一个 BAT 脚本定时跑 |
 
-| 维度 | Token（Fine-Grained PAT） | GitHub SSH | ClawHub OAuth |
-|------|--------------------------|-----------|-------------|
-| 凭证传递 | 通过环境变量给 AI | 私钥不离开本地 | 浏览器授权，Token 存本地 |
-| 安全风险 | 中高 | 极低 | 低 |
-| 适用场景 | API 调用、精细化权限 | **Git 操作首选** | **Skill 发布首选** |
+**一句话区别**：这是**软件清理**——不动分区表，不动硬件边界。清的是缓存、日志、旧更新备份。和上面「分区合并」是互补关系：先清理，不够再扩容。
 
-> 💡 **使用顺序：GitHub 用 SSH，ClawHub 用 OAuth → 无法用时再用 Token**。Skill 文档内有完整的「给其他 AI 的简洁指令模板」，直接复制就能让任何 AI 帮你走 SSH 流程。
+| 文档 | 受众 | 内容 |
+|------|------|------|
+| [📘 完整操作指南](windows-disk-cleanup/windows-disk-cleanup-skill.md) | 所有人 | 13 项逐条拆解（磁盘路径 + 安全评级 + 清理后果）+ CLI 自动化 + 三套脚本 + FAQ |
+
+> ⚡ **关键发现**：95% 的用户不知道「清理系统文件」按钮。不点它，Windows 更新缓存（5~30 GB）和 Windows.old（10~30 GB）根本不会出现。
 
 ---
 
-### 🧹 Windows 自带磁盘清理
+## 🔐 Token & SSH 安全认证
 
-> 逐项拆解 cleanmgr.exe 每项清理内容 + Dism 后台清理引擎 + 三套一键 BAT/PowerShell 脚本
+> **在聊天框里粘贴 Token？等你看到这条的时候，它可能已经泄露了。**
 
-网上 99% 的教程只说"勾选全部 → 确定"，但从不说左下角的「清理系统文件」按钮才是关键——不点它，Windows 更新缓存（5~30 GB）和 Windows.old（10~30 GB）根本不会出现。
-
-| 文档 | 说明 |
+| 维度 | 说明 |
 |------|------|
-| [📘 完整操作指南](windows-disk-cleanup/windows-disk-cleanup-skill.md) | 13 项逐条拆解（含路径、安全评级） + CLI 自动化 + 三套脚本 + Dism 组件分析 + FAQ |
+| **解决什么问题** | 给 AI 工具授权 GitHub/ClawHub 时，如何不把 Token 暴露在对话文本中 |
+| **涉及什么** | Token 泄露检测 + GitHub SSH 免密认证 + ClawHub OAuth 浏览器授权 |
+| **风险等级** | 🟡 中 —— Token 泄露可能导致仓库被篡改、API 额度被盗刷 |
+| **需要什么工具** | ssh-keygen、gh CLI、clawhub CLI |
+| **AI 做什么** | 生成密钥对、输出公钥、验证连接、输出可复制的指令模板 |
+| **你做什么** | 把公钥贴到 GitHub 设置页，或浏览器里点一下授权 |
 
-本模块覆盖：标准模式 8 项 + 管理员模式 5 项、sageset/sagerun 机制、`Dism /AnalyzeComponentStore` 分析命令、CCleaner 横向对比、5 个高频故障场景。
+**一句话区别**：这是**认证配置**——一劳永逸改掉「在聊天框里贴 Token」这个危险习惯。和上面两个磁盘模块解决的问题完全不同。
 
-> 💡 磁盘清理是 AI 最擅长的教学场景——每项要不要清、为什么、在磁盘哪个位置，Human 去记太琐碎，AI 一个文档说清楚。
+**三种方案优先级**：
+
+| 方案 | 凭证经过对话文本？ | 安全等级 | 适用场景 |
+|------|:---:|:---:|------|
+| GitHub SSH | ❌ 不经过 | 🟢 极低风险 | Git 推送/拉取（首选） |
+| ClawHub OAuth | ❌ 不经过 | 🟢 低风险 | Skill 发布（首选） |
+| Fine-Grained PAT | ⚠️ 经过但可限制 | 🟡 中风险 | API 调用、兜底方案 |
+
+| 文档 | 受众 | 内容 |
+|------|------|------|
+| [📄 安全认证 Skill](token-security/SKILL.md) | 所有用 AI 写代码的人 | 泄露检测命令 + SSH 四步流程 + OAuth 三步流程 + 给其他 AI 的指令模板 |
+
+> ⚡ **核心原则**：Token 要经过对话文本才能给 AI → 不安全。SSH 私钥不出本地、OAuth 走浏览器授权 → Token 从不出现在对话里。后者永远优先。
 
 ---
 
-### 🔍 清除残留 SID 账户
+## 🔍 清除残留 SID 账户
 
-> 文件夹 → 属性 → 安全 → 发现一个「未知账户(S-1-5-21-xxx)」删不掉？
+> **文件夹属性里有个「未知账户(S-1-5-21-xxx)」删不掉？这是系统重装留下的孤儿 SID。**
 
-这是已删除用户的残留 SID（Security Identifier）。虽然一般不影响使用，但权限列表看着碍眼，安全审计工具也会标记。本模块记录了从识别到彻底清除的全过程。
+| 维度 | 说明 |
+|------|------|
+| **解决什么问题** | 文件权限列表中出现已删除用户的残留 SID，清理掉保持系统整洁 |
+| **涉及什么** | 识别目标 SID → 文件系统/注册表/任务计划/服务全扫描 → 逐项清除 → 验证 |
+| **风险等级** | 🟡 中低 —— 操作本身安全，但需要先确认 SID 对应的用户确实已不存在 |
+| **需要什么工具** | PowerShell Get-Acl / Set-Acl、icacls、regedit |
+| **AI 做什么** | 写扫描脚本、批量清理 ACL、验证无残留 |
+| **你做什么** | 确认目标 SID、审核扫描结果、决定是否执行清除 |
 
-**实际操作案例**：在 `C:\ProgramData\Microsoft\Windows\Start Menu` 中发现 `S-1-5-21-1482809247-1092165676-3601881385-1000`，经全盘扫描确认仅此一处，已成功移除。
+**一句话区别**：这是**权限审计**——不是清空间，不是配认证，是清理系统里残留的「幽灵账户」。和上面三个模块解决的问题完全不同。
 
 **四步流程**：
 
 ```
-识别目标 SID → 全面扫描（文件系统 + 注册表 + 任务计划 + 服务）→ 逐项清除 → 验证无残留
+识别 SID  →  全盘扫描（文件系统 + 注册表 + 任务计划 + 服务） →  逐项清除  →  验证
 ```
 
-**扫描范围覆盖**：
+| 文档 | 受众 | 内容 |
+|------|------|------|
+| [📘 操作指南](sid-cleanup/清除残留SID账户操作指南.md) | 遇到「未知账户」的用户 | 完整 PowerShell 命令 + 实战案例 + 截图 |
 
-| 检查项 | 方法 |
-|--------|------|
-| 文件系统 ACL | `icacls /findsid` + `Get-Acl` 递归扫描 ProgramData、Users、Windows |
-| 注册表 | ProfileList、ProfileGuid、AppID |
-| 计划任务 | `Get-ScheduledTask` 过滤 Principal.UserId |
-| Windows 服务 | WMI 查询 StartName |
-| SID 命名文件夹 | `C:\Users\S-1-5-21-*` 残留目录 |
+> ⚡ **关键踩坑**：手动翻属性窗口逐条删 ACL 要十几分钟。AI 写一套 `Get-Acl` + `Set-Acl` 脚本三分钟扫完全盘并清理干净。重复性权限操作是 AI 最高效的应用场景。
 
-| 文档 | 说明 |
-|------|------|
-| [📘 操作指南](sid-cleanup/清除残留SID账户操作指南.md) | 完整操作流程：识别 → 扫描 → 清除 → 验证。含全部 PowerShell 命令和截图 |
+---
 
-包含权限条目示例截图（其他账户已打码处理）。
+## 🔀 模块关系：什么时候用哪个
 
-> 💡 手动翻属性窗口删 ACL 条目要十几分钟，AI 写个 `Get-Acl` + `Set-Acl` 脚本三分钟扫完整个 ProgramData 并清理干净。这类重复性权限操作最适合交给 AI。
+```
+C 盘红了 ──┬── 先跑「磁盘清理」清缓存 → 还是不够 → 再跑「分区合并」物理扩容
+           └── 两者互补，不是二选一
+
+安全认证 ──── 独立模块。跟磁盘没关系，但每个用 AI 写代码的人都该配好
+
+SID 残留 ──── 独立模块。系统重装后按需运行，跟上面三个都没关系
+```
 
 ---
 
@@ -134,20 +161,22 @@
 pc-ops/
 ├── README.md
 │
-├── disk-partition-merge/
+├── disk-partition-merge/          ← 物理扩容
 │   ├── F盘空间合并至C盘操作全流程指南.md
 │   ├── disk-partition-merge-bitlocker-skill.md
-│   └── aomei-*.png (5张截图)
+│   └── aomei-*.png (5 张截图)
 │
-├── windows-disk-cleanup/
-│   └── windows-disk-cleanup-skill.md    ← 583行全指南：GUI拆解 + CLI + Dism + 脚本
+├── windows-disk-cleanup/          ← 软件清理
+│   ├── README.md
+│   └── windows-disk-cleanup-skill.md
 │
-├── sid-cleanup/
-│   ├── 清除残留SID账户操作指南.md
-│   └── sid-permission-example.png
+├── token-security/                ← 认证安全
+│   └── SKILL.md
 │
-└── token-security/
-    └── SKILL.md          ← 双模块：Token安全检测 + SSH认证流程
+└── sid-cleanup/                   ← 权限审计
+    ├── README.md
+    ├── 清除残留SID账户操作指南.md
+    └── sid-permission-example.png
 ```
 
 ---
@@ -158,9 +187,14 @@ pc-ops/
 git clone https://github.com/web-seeker/pc-ops.git
 ```
 
-进入对应模块文件夹，打开 `.md` 文档即可。每个模块独立自包含。
+每个模块独立自包含，按需进入对应文件夹。建议阅读顺序：
 
-> ⚠️ 操作前务必完整阅读文档中的免责声明和注意事项。磁盘和权限操作有不可逆风险，请确认数据已备份。
+1. 先在 `windows-disk-cleanup` 清一波空间
+2. 还不够 → 进 `disk-partition-merge` 物理扩容
+3. 顺手把 `token-security` 的 SSH 配好（以后再也不贴 Token）
+4. 哪天发现「未知账户」→ 进 `sid-cleanup`
+
+> ⚠️ 磁盘和权限操作有不可逆风险。操作前完整阅读对应模块的免责声明，确认数据已备份。
 
 ---
 
@@ -171,5 +205,5 @@ MIT · 详见各文档内免责声明
 ---
 
 <p align="center">
-  <sub>🤖 由 WorkBuddy 辅助生成 · 所有步骤已实际操作验证 · 2026.06</sub>
+  <sub>所有步骤已实际操作验证 · 2026.06</sub>
 </p>
