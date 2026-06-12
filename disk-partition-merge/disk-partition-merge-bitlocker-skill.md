@@ -8,7 +8,7 @@
 
 | 工具 | 说明 |
 |------|------|
-| **QoderWork CN（User 版）** | 本次使用的 AI 桌面助手，负责命令行操作（磁盘检查、diskpart 删除分区、BitLocker 管理）。QoderWork 是 Qoder 桌面应用的核心功能模块。 |
+| AI 桌面助手 | 负责命令行操作（磁盘检查、diskpart 删除分区、BitLocker 管理） |
 | **AOMEI Partition Assistant Standard Edition**（傲梅分区助手 标准版） | 第三方磁盘分区工具，用于移动分区和扩展 C 盘。免费版即可完成操作。下载地址：https://www.disktool.cn/download.html |
 | **Windows diskpart** | Windows 自带磁盘管理命令行工具，用于删除 F 盘分区 |
 | **Windows manage-bde** | Windows 自带 BitLocker 管理命令行工具，用于暂停和恢复磁盘加密保护 |

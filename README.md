@@ -107,7 +107,7 @@
 
 | 文档 | 受众 | 内容 |
 |------|------|------|
-| [📄 安全认证 Skill](token-security/SKILL.md) | 所有用 AI 写代码的人 | 泄露检测命令 + SSH 四步流程 + OAuth 三步流程 + 给其他 AI 的指令模板 |
+| [📄 Token & SSH 安全认证](token-security/token-ssh-auth.md) | 所有用 AI 写代码的人 | 泄露检测命令 + SSH 四步流程 + OAuth 三步流程 + 给其他 AI 的指令模板 |
 
 > ⚡ **核心原则**：Token 要经过对话文本才能给 AI → 不安全。SSH 私钥不出本地、OAuth 走浏览器授权 → Token 从不出现在对话里。后者永远优先。
 
@@ -171,7 +171,7 @@ pc-ops/
 │   └── windows-disk-cleanup-skill.md
 │
 ├── token-security/                ← 认证安全
-│   └── SKILL.md
+│   └── token-ssh-auth.md
 │
 └── sid-cleanup/                   ← 权限审计
     ├── README.md

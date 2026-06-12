@@ -153,7 +153,6 @@ $env:GITHUB_TOKEN = "ghp_xxxxxxxxxxxx"
 | GitHub PAT | `ghp_` |
 | GitHub OAuth | `gho_` |
 | OpenAI | `sk-` |
-| Qoder | `pt-` |
 | Vercel | `v1.` |
 | ClawHub API Token | `chub_` |
 
@@ -171,7 +170,7 @@ $env:GITHUB_TOKEN = "ghp_xxxxxxxxxxxx"
 
 ---
 name: github-ssh-auth
-description: GitHub SSH 安全认证流程 — 零 Token 暴露。当需要授权 WorkBuddy/AI 访问 GitHub 时使用。
+description: GitHub SSH 安全认证流程 — 零 Token 暴露。当需要授权 AI 访问 GitHub 时使用。
 agent_created: true
 ---
 
@@ -202,7 +201,7 @@ cat ~/.ssh/id_ed25519.pub
 
 1. 复制上一步输出的公钥（以 `ssh-ed25519` 开头的那一整行）
 2. 打开 https://github.com/settings/ssh/new
-3. Title：填任意标识（如 `workbuddy`、`macbook`）
+3. Title：填任意标识（如 `my-pc`、`macbook`）
 4. Key type：选择 `Authentication Key`
 5. Key：粘贴公钥
 6. 点击 "Add SSH key"
