@@ -1,4 +1,4 @@
-<p align="center">
+﻿<p align="center">
   <img src="https://img.shields.io/badge/platform-Windows-blue?style=flat-square" alt="Windows">
   <img src="https://img.shields.io/badge/tools-PowerShell%20%7C%20AOMEI%20%7C%20cleanmgr%20%7C%20SSH-green?style=flat-square" alt="Tools">
   <img src="https://img.shields.io/badge/license-MIT-lightgrey?style=flat-square" alt="MIT">
@@ -39,7 +39,7 @@
 
 **Step 1：打开磁盘清理，选 C 盘**
 
-![cleanmgr 主界面](windows-disk-cleanup/1.png)
+<img src="windows-disk-cleanup/1.png" alt="cleanmgr 主界面" width="500">
 
 ```
 Win + R → cleanmgr → 选 C 盘 → 确定
@@ -48,25 +48,25 @@ Win + R → cleanmgr → 选 C 盘 → 确定
 
 **Step 2：点击「清理系统文件」← 关键一步！**
 
-![清理系统文件按钮](windows-disk-cleanup/2.png)
+<img src="windows-disk-cleanup/2.png" alt="清理系统文件按钮" width="500">
 
 点击后需要管理员权限（UAC 确认），重新扫描后会出现大项。
 
 **Step 3：系统文件清理项出现**
 
-![系统文件清理列表](windows-disk-cleanup/3.png)
+<img src="windows-disk-cleanup/3.png" alt="系统文件清理列表" width="500">
 
 此时可见 **Windows 更新清理（5~30 GB）**、**以前的 Windows 安装（10~30 GB）** 等大头。
 
 **Step 4：勾选 + 确定，开始清理**
 
-![清理进度中](windows-disk-cleanup/4.png)
+<img src="windows-disk-cleanup/4.png" alt="清理进度" width="500">
 
 Dism 后台还会清理 WinSxS 旧组件。
 
 **Step 5：一键脚本（可选）**
 
-![命令行一键清理](windows-disk-cleanup/5.png)
+<img src="windows-disk-cleanup/5.png" alt="命令行一键清理" width="500">
 
 ```batch
 :: 管理员 CMD 中运行
@@ -109,7 +109,7 @@ Dism /online /Cleanup-Image /StartComponentCleanup /Quiet
 
 **一句话**：这是物理扩容——真的动了磁盘分区表。和上面磁盘清理是互补关系：先清理，不够再扩容。
 
-![AOMEI 操作截图](disk-partition-merge/aomei-main-interface.png)
+<img src="disk-partition-merge/aomei-main-interface.png" alt="AOMEI 主界面" width="500">
 
 | 文档 | 内容 |
 |------|------|
@@ -144,7 +144,7 @@ Dism /online /Cleanup-Image /StartComponentCleanup /Quiet
 识别 SID → 全盘扫描（文件系统+注册表+任务计划+服务） → 逐项清除 → 验证
 ```
 
-![SID 权限示例](sid-cleanup/sid-permission-example.png)
+<img src="sid-cleanup/sid-permission-example.png" alt="SID 权限示例" width="500">
 
 | 文档 | 内容 |
 |------|------|
@@ -208,3 +208,4 @@ MIT · 所有步骤已实际操作验证 · 2026.06
 <p align="center">
   <sub>Made with ❤️ by <a href="https://github.com/web-seeker">web-seeker</a></sub>
 </p>
+
