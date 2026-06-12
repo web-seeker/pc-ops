@@ -35,7 +35,7 @@
 
 #### Win + R — 万能运行入口
 
-<img src="windows-shortcuts/win-R.png" alt="Win+R 运行对话框" width="500">
+<img src="windows-shortcuts/win-R.png" alt="Win+R 运行对话框" width="400">
 
 按下后直接输入程序名或命令，秒开一切：
 
@@ -51,7 +51,7 @@
 
 #### Win + X — 系统工具箱
 
-<img src="windows-shortcuts/win-X.png" alt="Win+X 快捷菜单" width="500">
+<img src="windows-shortcuts/win-X.png" alt="Win+X 快捷菜单" width="400">
 
 右键开始按钮也能打开。一键直达 15+ 系统工具：PowerShell（管理员）、设备管理器、磁盘管理、事件查看器、任务管理器、网络连接、系统信息……
 
